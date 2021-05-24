@@ -1,0 +1,9 @@
+---
+
+prod:
+  eu-west-1:
+      resource.aws_s3_bucket.barak_poc:
+        acl: '"private"'
+        bucket: '"barak_poc"'
+        versioning:
+          enabled: True

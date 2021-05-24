@@ -1,0 +1,11 @@
+---
+
+prod:
+  eu-west-1:
+    resource.aws_lambda_function.barak_poc_get_time:
+      function_name: '"get_time:LATEST"'
+      s3_bucket: '"barak_poc"'
+      s3_key: '"get_time.zip"'
+      handler: '"barak_poc_get_time.lambda_handler"'
+      runtime: '"python3.7"'
+      role: aws_iam_role.barak_poc_lambda_exec.arn

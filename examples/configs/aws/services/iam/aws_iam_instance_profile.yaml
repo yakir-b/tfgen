@@ -1,0 +1,7 @@
+---
+
+prod:
+  eu-west-1:
+    resource.aws_iam_instance_profile.barak_poc_ec2_profile:
+      name: '"barak_poc_ec2_profile"'
+      role: aws_iam_role.barak_poc_ec2_exec.name

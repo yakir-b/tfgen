@@ -1,0 +1,52 @@
+---
+
+_default_sg: &default_sg
+    ingress.0:
+      description: '"allow custom tcp 8080"'
+      from_port: 8080
+      to_port: 8080
+      protocol: '"tcp"'
+      cidr_blocks:
+        - '"0.0.0.0/0"'
+
+    egress.0:
+      description: '"allow to any"'
+      from_port: 0
+      to_port: 0
+      protocol: -1 
+      cidr_blocks:
+        - '"0.0.0.0/0"'
+
+prod:
+  eu-west-1:
+    resource.aws_security_group.barak_poc_instance:
+      name: '"barak_poc_instance"'
+      vpc_id: module.poc_vpc.vpc_id
+      ingress.0:
+        description: '"allow ssh"'
+        from_port: 22
+        to_port: 22
+        protocol: '"tcp"'
+        cidr_blocks:
+          - local.my_ip_cidr
+
+      ingress.1:
+        description: '"allow custom tcp 8080"'
+        from_port: 8080
+        to_port: 8080
+        protocol: '"tcp"'
+        cidr_blocks:
+          - '"0.0.0.0/0"'
+
+      egress.0:
+        description: '"allow to any"'
+        from_port: 0
+        to_port: 0
+        protocol: -1 
+        cidr_blocks:
+          - '"0.0.0.0/0"'
+
+    resource.aws_security_group.barak_poc_alb:
+      name: '"barak_poc_alb"'
+      vpc_id: module.poc_vpc.vpc_id
+      <<: *default_sg

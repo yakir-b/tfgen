@@ -1,0 +1,21 @@
+---
+
+prod:
+  us-east-1:
+    terraform: &default
+      required_version: '"~> 0.14.0"'
+      backend.s3: &backend
+        bucket: '"prod-use1-terraform-backend"'
+        key: '"terraform.tfstate"'
+        region: '"us-east-1"'
+        encrypt: True
+        dynamodb_table: '"prod-use1-terraform-lock"'
+
+  eu-west-1:
+    terraform:
+      <<: *default
+      backend.s3:
+        <<: *backend
+        bucket: '"prod-euw1-terraform-backend"'
+        region: '"eu-west-1"'
+        dynamodb_table: '"prod-euw1-terraform-lock"'

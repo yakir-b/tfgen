@@ -1,0 +1,10 @@
+---
+
+prod:
+  eu-west-1:
+    resource.aws_api_gateway_deployment.barak_poc:
+      rest_api_id: aws_api_gateway_rest_api.barak_poc.id
+      stage_name: '"dev"'
+      depends_on:
+        - aws_lambda_function.barak_poc_get_time
+        - aws_lb.barak_poc

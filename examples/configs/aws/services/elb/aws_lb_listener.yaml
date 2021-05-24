@@ -1,0 +1,11 @@
+---
+
+prod:
+  eu-west-1:
+    resource.aws_lb_listener.barak_poc:
+      load_balancer_arn: aws_lb.barak_poc.arn
+      port: '"8080"'
+      protocol: '"HTTP"'
+      default_action:
+        type: '"forward"'
+        target_group_arn: aws_lb_target_group.barak_poc.arn

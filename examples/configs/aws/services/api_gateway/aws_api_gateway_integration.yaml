@@ -1,0 +1,19 @@
+---
+
+prod:
+  eu-west-1:
+    resource.aws_api_gateway_integration.barak_poc:
+      rest_api_id: aws_api_gateway_rest_api.barak_poc.id
+      resource_id: aws_api_gateway_method.barak_poc_get_time.resource_id
+      http_method: aws_api_gateway_method.barak_poc_get_time.http_method
+      integration_http_method: '"POST"'
+      type: '"AWS_PROXY"'
+      uri: aws_lambda_function.barak_poc_get_time.invoke_arn
+
+    resource.aws_api_gateway_integration.barak_poc_http_proxy:
+      rest_api_id: aws_api_gateway_rest_api.barak_poc.id
+      resource_id: aws_api_gateway_method.barak_poc_get_hello_world.resource_id
+      http_method: aws_api_gateway_method.barak_poc_get_hello_world.http_method
+      integration_http_method: '"GET"'
+      type: '"HTTP_PROXY"'
+      uri: '"http://${aws_lb.barak_poc.dns_name}:8080/"'

@@ -1,0 +1,13 @@
+---
+
+prod:
+  eu-west-1:
+    resource.aws_iam_role.barak_poc_lambda_exec:
+      name: '"barak_poc_get_time_lambda_exec"'
+      assume_role_policy: file("configs/aws/files/policy/barak_poc_lambda_exec_sts_policy.json")
+      depends_on:
+        - aws_s3_bucket_object.barak_poc_get_time
+
+    resource.aws_iam_role.barak_poc_ec2_exec:
+      name: '"barak_poc_ec2_exec"'
+      assume_role_policy: file("configs/aws/files/policy/barak_poc_ec2_exec_sts_policy.json")

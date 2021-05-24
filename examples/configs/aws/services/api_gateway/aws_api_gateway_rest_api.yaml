@@ -1,0 +1,7 @@
+---
+
+prod:
+  eu-west-1:
+    resource.aws_api_gateway_rest_api.barak_poc:
+      name: '"barak_poc"'
+      description: '"barak_poc rest api gateway"'

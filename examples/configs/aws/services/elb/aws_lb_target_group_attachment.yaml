@@ -1,0 +1,9 @@
+---
+
+prod:
+  eu-west-1:
+    resource.aws_lb_target_group_attachment.barak_poc:
+      count: length(module.poc_vpc.azs)
+      target_group_arn: aws_lb_target_group.barak_poc.arn
+      target_id: aws_instance.barak_poc[count.index].id
+      port: 8080

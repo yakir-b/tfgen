@@ -1,0 +1,10 @@
+---
+
+prod:
+  eu-west-1:
+    resource.aws_lambda_permission.barak_poc_allow_apigw:
+      statement_id: '"AllowAPIGatewayInvoke"'
+      action: '"lambda:InvokeFunction"'
+      function_name: aws_lambda_function.barak_poc_get_time.function_name
+      principal: '"apigateway.amazonaws.com"'
+      source_arn: '"${aws_api_gateway_rest_api.barak_poc.execution_arn}/*"'

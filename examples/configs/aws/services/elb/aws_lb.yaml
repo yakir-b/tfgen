@@ -1,0 +1,12 @@
+---
+
+prod:
+  eu-west-1:
+    resource.aws_lb.barak_poc:
+      name: '"barak-poc"'
+      internal: False
+      load_balancer_type: '"application"'
+      security_groups: 
+        - aws_security_group.barak_poc_alb.id
+      subnets: module.poc_vpc.public_subnets
+      enable_deletion_protection: False

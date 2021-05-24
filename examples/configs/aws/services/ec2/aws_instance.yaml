@@ -1,0 +1,21 @@
+---
+
+prod:
+  eu-west-1:
+    resource.aws_instance.barak_poc:
+      count: length(module.poc_vpc.azs)
+      instance_type: '"t2.micro"'
+      ami: '"ami-01720b5f421cf0179"'
+      key_name: var.ec2_keypair_name
+      vpc_security_group_ids: 
+        - aws_security_group.barak_poc_instance.id
+      iam_instance_profile: aws_iam_instance_profile.barak_poc_ec2_profile.name
+      subnet_id: module.poc_vpc.public_subnets[count.index]
+      root_block_device:
+        volume_size: 8
+      user_data: file("configs/aws/files/user_data/barak_poc.sh")
+      tags:
+        project: '"barak_poc"'
+        name: '"barak_poc-${reverse(split("-", module.poc_vpc.azs[count.index]))[0]}"'
+      depends_on:
+        - module.barak_poc_ecr_docker_image

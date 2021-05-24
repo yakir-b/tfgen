@@ -1,0 +1,10 @@
+---
+
+prod:
+  eu-west-1:
+    local:
+      my_ip_cidr: '"${var.my_ip_address}/32"'
+
+  us-east-1:
+    local:
+      my_ip_cidr: '"${var.my_ip_address}/32"'

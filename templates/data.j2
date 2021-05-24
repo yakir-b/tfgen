@@ -1,0 +1,6 @@
+{% set data_type, label = block_header.split('.')[1:] %}
+data "{{ data_type }}" "{{ label }}" {
+{% for key, value in attributes.items() %}
+  {{ evaluate(key, value) }}
+{% endfor %}
+}

@@ -1,0 +1,13 @@
+---
+
+prod:
+  eu-west-1:
+    resource.aws_api_gateway_resource.barak_poc_get_time:
+      rest_api_id: aws_api_gateway_rest_api.barak_poc.id
+      parent_id: aws_api_gateway_rest_api.barak_poc.root_resource_id
+      path_part: '"get_time"'
+
+    resource.aws_api_gateway_resource.barak_poc_get_hello_world:
+      rest_api_id: aws_api_gateway_rest_api.barak_poc.id
+      parent_id: aws_api_gateway_rest_api.barak_poc.root_resource_id
+      path_part: '"get_hello_world"'  

@@ -1,0 +1,12 @@
+---
+
+prod:
+  eu-west-1:
+    resource.aws_s3_bucket_object.barak_poc_get_time:
+      acl: '"private"'
+      bucket: aws_s3_bucket.barak_poc.id
+      key: '"get_time.zip"'
+      source: '"get_time.zip"'
+      etag: filemd5("/home/barak/Projects/Terraform/Earnix/get_time.zip")
+      provisioner.local-exec:
+        command: '"zip /home/barak/Projects/Terraform/Earnixget_time.zip /home/barak/Projects/Terraform/Earnixget_time.py"'

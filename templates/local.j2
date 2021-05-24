@@ -1,0 +1,5 @@
+locals {
+{% for key, value in attributes.items() %}
+  {{ evaluate(key, value) }}
+{% endfor %}
+}

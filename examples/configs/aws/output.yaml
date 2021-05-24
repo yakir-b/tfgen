@@ -1,0 +1,9 @@
+---
+
+prod:
+  eu-west-1:
+    output.barak_poc_get_time_url:
+      value: '"${aws_api_gateway_deployment.barak_poc.invoke_url}/get_time"'
+
+    output.barak_poc_get_hello_world_url:
+      value: '"${aws_api_gateway_deployment.barak_poc.invoke_url}/get_hello_world"'

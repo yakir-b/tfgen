@@ -1,0 +1,6 @@
+{% set provider_name = block_header.split('.')[1] %}
+provider "{{ provider_name }}" {
+{% for key, value in attributes.items() %}
+  {{ evaluate(key, value) }}
+{% endfor %}
+}

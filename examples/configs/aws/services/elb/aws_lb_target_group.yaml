@@ -1,0 +1,14 @@
+---
+
+prod:
+  eu-west-1:
+    resource.aws_lb_target_group.barak_poc:
+      name: '"barak-poc-alb-tg"'
+      port: 8080
+      protocol: '"HTTP"'
+      vpc_id: module.poc_vpc.vpc_id
+      health_check:
+        interval: 10
+        port: 8080
+        path: '"/health/is_alive"'
+        matcher: '"200"'

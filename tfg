@@ -1,0 +1,72 @@
+#! /bin/bash
+
+# ACCOUNT="$1"
+# REGION="$2"
+# TARGET="${3:-*}"
+
+usage() {
+
+  echo
+  echo "Usage: $0 -a [account] -r [region] -t [target] -l -v"
+  echo
+  echo "Options:"
+  echo "  -h  :  This usage"
+  echo "  -a  :  Set account name"
+  echo "  -r  :  Set region name"
+  echo "  -t  :  Set target name as regex. ommiting will use default='*'"
+  echo "  -l  :  Run on local copy and don't pull from git"
+  echo "  -v  :  Use terraform validate on the generated code, default is terraform apply"
+  echo
+
+  exit 0
+}
+
+
+if [ $# -gt 0 ]
+  then
+    while [ $# -gt 0 ]
+      do
+        case $1 in
+          -a) shift; ACCOUNT="$1"
+          ;;
+
+          -r) shift; REGION="$1"
+          ;;
+
+          -t) shift; TARGET="${1:-*}"
+          ;;
+
+          -l) LOCAL="true"
+          ;;
+
+          -v) VALIDATE="true"
+          ;;
+
+          *) usage
+          ;;
+        esac
+      
+        shift
+    done
+
+  else
+    usage
+fi
+
+if [ "$LOCAL" != "true" ]
+  then
+    git pull --rebase
+fi
+
+python tfgen.py --account $ACCOUNT --region $REGION --target "$TARGET"
+
+if [ $? -eq 0 ]
+  then
+    if [ "$VALIDATE" == "true" ]
+      then
+        terraform validate $PWD/output/
+
+      else
+        terraform apply $PWD/output/
+    fi
+fi
