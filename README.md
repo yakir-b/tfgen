@@ -86,8 +86,8 @@ Saying that, putting all kind of resources names with the same resource type in 
 <account>:
   <region>:
  ```
- where **<account>** can be 'prod', 'qa', 'dev' or whatever you choose. 
- **<region>** should be set as cloud provider region names like 'us-east-1' etc.
+ where **\<account\>** can be 'prod', 'qa', 'dev' or whatever you choose. 
+ **\<region\>** should be set as cloud provider region names like 'us-east-1' etc.
  
 resource configuration structure:
  ```
@@ -98,8 +98,8 @@ resource configuration structure:
 ```
 where:
 **resource** represent that you are aming for a resource declearation.
-**<resource_type>** represent the cloud provider resource type name as in terraform cloud provider resource documentation.
-**<label>** represent the terraform label for this resource (see nameing conventions).
+**\<resource_type\>** represent the cloud provider resource type name as in terraform cloud provider resource documentation.
+**\<label\>** represent the terraform label for this resource (see nameing conventions).
 
 example:
 ```
@@ -122,7 +122,7 @@ module configuration structure:
 ```
 where:
 **module** represent that you are aming for a module declearation.
-**<label>** represent the terraform label for this module (see nameing conventions).
+**\<label\>** represent the terraform label for this module (see nameing conventions).
 
 example:
 ```
@@ -158,7 +158,7 @@ variable configuration structure:
 ```
 where:
 **variable** represent that you are aming for a variable declearation.
-**<label>** represent the terraform label for this variable (see nameing conventions).
+**\<label\>** represent the terraform label for this variable (see nameing conventions).
 
 example:
 ```
