@@ -1,8 +1,6 @@
 #! /bin/bash
 
-# ACCOUNT="$1"
-# REGION="$2"
-# TARGET="${3:-*}"
+
 
 usage() {
 
@@ -33,7 +31,7 @@ if [ $# -gt 0 ]
           -r) shift; REGION="$1"
           ;;
 
-          -t) shift; TARGET="${1:-*}"
+          -t) shift; TARGET="$1"
           ;;
 
           -l) LOCAL="true"
@@ -53,12 +51,24 @@ if [ $# -gt 0 ]
     usage
 fi
 
+if [ -z "$ACCOUNT" ] || [ -z "$REGION" ]
+  then
+    echo "Error: -a [ACCOUNT] or -r [REGION] is requierd ..."
+
+    usage
+fi
+
+if [ -z "$TARGET" ]
+  then
+    TARGET='*'
+fi
+
 if [ "$LOCAL" != "true" ]
   then
     git pull --rebase
 fi
 
-python tfgen.py --account $ACCOUNT --region $REGION --target "$TARGET"
+python3 tfgen.py --account $ACCOUNT --region $REGION --target "$TARGET"
 
 if [ $? -eq 0 ]
   then
@@ -67,6 +77,14 @@ if [ $? -eq 0 ]
         terraform validate $PWD/output/
 
       else
-        terraform apply $PWD/output/
+        if [ "$TARGET" != '*' ]
+          then
+            for target in $(cat $PWD/output/.targets)
+              do
+                TARGETS+="-target=$target "
+            done
+        fi
+
+        terraform apply $TARGETS $PWD/output/
     fi
 fi
