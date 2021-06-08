@@ -30,7 +30,7 @@ def get_targets(config, account, region, pattern):
 
     targets = []
 
-    specials = ['local', 'provider', 'terraform', 'variable']
+    specials = ['data', 'local', 'provider', 'terraform', 'variable']
 
     if pattern == '*':
         targets = list(config[account][region])
@@ -61,7 +61,7 @@ def templating(template_dir, template_file, **kwargs):
         tf_file.write(render)
 
 
-def dict2hcl(obj, hcl='', indent_size=2, recursive=False):
+def dict2hcl(obj, obj_type='', hcl_block='', indent_size=2, recursive=False):
 
     indent = ' ' * indent_size
 
@@ -90,7 +90,7 @@ def dict2hcl(obj, hcl='', indent_size=2, recursive=False):
 
                         indent_size += 4
                         
-                        items = dict2hcl(item, items, indent_size, True)
+                        items = dict2hcl(item, obj_type, items, indent_size, True)
                         
                         indent_size -= 4
                         
@@ -104,40 +104,50 @@ def dict2hcl(obj, hcl='', indent_size=2, recursive=False):
                 value = items
 
         if isinstance(value, dict):
-            if key == 'tags':
-                hcl += '{}{:<30} = {}\n'.format(indent, 'tags', '{')
+            if obj_type == 'variable':
+                hcl_block += '{}{} = {}\n'.format(indent, key, '{')
+
+            elif key == 'tags':
+                hcl_block += '{}{:<30} = {}\n'.format(indent, key, '{')
 
             elif key.startswith('provisioner'):
                 provisioner, executer = key.split('.')
 
-                hcl += '\n{}{} "{}" {}\n'.format(indent, provisioner, executer, '{')
+                hcl_block += '\n{}{} "{}" {}\n'.format(indent, provisioner, executer, '{')
 
             elif key.startswith('backend'):
                 backend, backend_type = key.split('.')
 
-                hcl += '\n{}{} "{}" {}\n'.format(indent, backend, backend_type, '{')
+                hcl_block += '\n{}{} "{}" {}\n'.format(indent, backend, backend_type, '{')
 
             elif 'ingress' in key or 'egress' in key:
-                hcl += '\n{}{} {}\n'.format(indent, key.split('.')[0], '{')
+                hcl_block += '\n{}{} {}\n'.format(indent, key.split('.')[0], '{')
+
+            elif key == 'dimensions':
+                hcl_block += '{}{} = {}\n'.format(indent, key, '{')
 
             else:
-                hcl += '{}{}{}\n'.format(indent, key, ' {')
+                hcl_block += '{}{}{}\n'.format(indent, key, ' {')
 
             indent_size += 2
 
-            hcl = dict2hcl(value, hcl, indent_size, True)
+            hcl_block = dict2hcl(value, obj_type, hcl_block, indent_size, True)
 
             indent_size -= 2
 
-            hcl += '{}{}\n'.format(indent, '}')
+            hcl_block += '{}{}\n'.format(indent, '}')
 
         else:
             if not recursive:
-                hcl += '{}{:<30} = {}\n'.format(indent, key, value)
-            else:
-                hcl += '{}{} = {}\n'.format(indent, key, value)
+                if obj_type == 'variable':
+                    hcl_block += '{}{} = {}\n'.format(indent, key, value)
 
-    return hcl.replace('\'', '')
+                else:
+                    hcl_block += '{}{:<30} = {}\n'.format(indent, key, value)
+            else:
+                hcl_block += '{}{} = {}\n'.format(indent, key, value)
+
+    return hcl_block.replace('\'', '')
 
 
 def get_args():
@@ -164,8 +174,7 @@ def main():
     config = merge_configs(account, region)
 
     for file in os.listdir('output/'):
-        if file.endswith('.tf'):
-            os.remove(os.path.join('output', file))
+        os.remove(os.path.join('output', file))
 
     print('\nTerraform is set for:')
     print('=====================')
@@ -176,32 +185,36 @@ def main():
     
     targets = get_targets(config, account, region, target)
 
-    print('\nTerraform selected targets:')
-    print('===========================')
+    if not target == '*':
+        print('\nTerraform selected targets:')
+        print('===========================')
 
-    if not target == '*' and not list(filter(lambda x: target in x, targets)):
-        print('{}No target were found.\n{}'.format('\033[91m', '\033[0m'))
+        if not list(filter(lambda x: target in x, targets)):
+            print('{}No target were found.\n{}'.format('\033[91m', '\033[0m'))
 
-        exit(1)
+            exit(1)
 
     else:
-        for target in targets:
-            target_suffix = None
+        for item in targets:
+            item_suffix = None
 
-            if target.startswith('resource.'):
-                target_suffix = target.removeprefix('resource.')
+            if item.startswith('resource.'):
+                item_suffix = item.removeprefix('resource.')
 
-            if target.startswith('module.'):
-                target_suffix = target
+            if item.startswith('module.'):
+                item_suffix = item
             
-            if target_suffix:
-                print('{}{}{}'.format('\033[92m', target_suffix, '\033[0m'))
+            if not target == '*' and item_suffix:
+                with open ('output/.targets', 'a') as targets_file:
+                    targets_file.write('{}\n'.format(item_suffix))
 
-            target_type = target.split('.')[0]
+                print('{}{}{}'.format('\033[92m', item_suffix, '\033[0m'))
 
-            attributes = config[account][region][target]
+            block_type = item.split('.')[0]
 
-            templating('templates', '{}.j2'.format(target_type), block_header=target, attributes=dict2hcl(attributes))
+            attributes = config[account][region][item]
+
+            templating('templates', '{}.j2'.format(block_type), block_header=item, attributes=dict2hcl(attributes, block_type))
 
         print('\n')
 
